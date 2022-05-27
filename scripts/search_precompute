@@ -1,0 +1,9 @@
+#!/bin/bash -
+
+set -x
+gpu=5
+for dataset in cora citeseer pubmed flickr ppi arxiv yelp reddit; do
+	for precompute in 1 2 3 4 5 6; do
+		time python3 -u node.pyc MLP $dataset --precompute $precompute --gpu $gpu --runs 3
+	done
+done | tee -a logs/$0.log

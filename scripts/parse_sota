@@ -1,0 +1,28 @@
+#!/bin/bash -
+
+if [ "$1" ]; then
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, MLP"
+        cat $1 | grep 'Namespace\|^score:' | grep MLP -A 1 | grep 'precompute=0' -A 1 | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, SGC"
+        cat $1 | grep 'Namespace\|^score:' | grep MLP -A 1 | grep -v 'precompute=0' | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, GraphSAGE"
+        cat $1 | grep 'Namespace\|^score:' | grep GraphSAGE -A 1 | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, FastGCN"
+        cat $1 | grep 'Namespace\|^score:' | grep FastGCN -A 1 | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, GraphSAINT"
+        cat $1 | grep 'Namespace\|^score:' | grep GraphSAINT -A 1 | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, ECN"
+        cat $1 | grep 'Namespace\|^score:\|CUDA out' | grep ECN -A 2 | grep "dataset='$dataset'" -A 2 | grep score | sort | sed -n '$p'
+    done
+fi | grep score -B 1

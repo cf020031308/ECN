@@ -1,0 +1,49 @@
+#!/bin/bash -
+
+set -x
+gpu=6
+hidden=256
+runs=3
+for dataset in pubmed flickr ppi arxiv yelp reddit; do
+	for precompute in 1 2 3; do
+		for embedding in 0.0 0.1 0.01 0.001; do
+			for attention in 0 1 8 32; do
+				time python3 -u node.pyc ECN $dataset \
+					--no-importance-sampling \
+					--embedding $embedding \
+					--attention $attention \
+					--precompute $precompute \
+					--hidden $hidden \
+					--runs $runs \
+					--gpu $gpu 2>&1
+                # Skip Connections
+				time python3 -u node.pyc ECN $dataset \
+					--no-importance-sampling \
+					--skip-connection \
+					--embedding $embedding \
+					--attention $attention \
+					--precompute $precompute \
+					--hidden $hidden \
+					--runs $runs \
+					--gpu $gpu 2>&1
+                # Importance Sampling
+				time python3 -u node.pyc ECN $dataset \
+					--embedding $embedding \
+					--attention $attention \
+					--precompute $precompute \
+					--hidden $hidden \
+					--runs $runs \
+					--gpu $gpu 2>&1
+                # Skip Connections & Importance Sampling
+				time python3 -u node.pyc ECN $dataset \
+					--skip-connection \
+					--embedding $embedding \
+					--attention $attention \
+					--precompute $precompute \
+					--hidden $hidden \
+					--runs $runs \
+					--gpu $gpu 2>&1
+			done
+		done
+	done
+done | tee -a logs/$0.log
