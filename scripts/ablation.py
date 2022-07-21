@@ -89,17 +89,36 @@ with open('output/ablation_attention.tex', 'w') as file:
     file.write(
         'Sampling & & ' + ' & '.join('' for _ in labels[:-1]) + r' \\' + '\n')
     file.write(r'\hline' + '\n')
+    vals = {}
+    alts = {}
     for uniform in (True, False):
         for embedding in (False, True):
             row = [
                 r'\checkmark' if flag else ''
                 for flag in (not uniform, embedding)]
-            for dataset in datasets[:-1]:
+            for dataset in datasets:
                 key = (dataset, uniform, False, embedding, True)
-                row.append('%+.2f' % (
-                    float(bests[1][key][1].split('±')[0])
-                    - float(bests[0][key][1].split('±')[0])))
+                val = float(bests[1][key][1].split('±')[0])
+                alt = [
+                    float(bests[i][(
+                        dataset, uniform, False, embedding, attention
+                    )][1].split('±')[0])
+                    if (attention, i) != (True, 1) else 0
+                    for attention in (False, True)
+                    for i in range(2)
+                ]
+                vals.setdefault(dataset, []).append(val)
+                alts.setdefault(dataset, []).extend(alt)
+                # alt = sum(alt) / len(alt)
+                alt = max(alt, default=0)
+                row.append('%+.2f' % (val - alt))
             file.write(' & '.join(row) + r' \\' + '\n')
+    file.write(' & '.join(
+        '%+.2f' % (
+            max(vals[dataset]) - max(alts[dataset])
+            # sum(vals[dataset]) / len(vals[dataset])
+            # - sum(alts[dataset]) / len(alts[dataset])
+        ) for dataset in datasets))
 
 with open('output/ablation_summary.tex', 'w') as file:
     file.write(
@@ -113,8 +132,8 @@ with open('output/ablation_summary.tex', 'w') as file:
         file.write('%s & %s \\\\\n' % (label, ' & '.join(
             (
                 '%+.2f' % (
-                    float(sum(ts) - sum(fs)) / len(ts)
-                    # max(ts, default=0) - max(fs, default=0)
+                    # float(sum(ts) - sum(fs)) / len(ts)
+                    max(ts, default=0) - max(fs, default=0)
                 ) + (' (%+.2f)' % (
                     float(sum(pres[dataset][1]) - sum(pres[dataset][0]))
                     / len(pres[dataset][0])
