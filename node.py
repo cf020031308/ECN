@@ -948,7 +948,7 @@ for run in range(args.runs):
         opt = Optim([*net.parameters()])
         layer1, layer2 = net.layers
         rank1 = 1 + int(deg / 2)
-        rank2 = deg if args.precomptue else rank1
+        rank2 = deg if args.precompute else rank1
         for epoch in range(1, 1 + args.max_epochs):
             for iteration in range(1 + int(deg * deg / rank1 / rank2)):
                 ev.start_sampling()
@@ -957,6 +957,7 @@ for run in range(args.runs):
                         perm.view(-1, 1), node_sampling(crow, col, perm, rank1)
                     ), dim=1).unique(sorted=False, return_inverse=True)
                     p = induc_P[n1]
+                    # TODO: here's a bug if precompute == 0
                     if not args.precompute:
                         n2 = node_sampling(crow, col, n1, rank2)
                         p = torch.cat((p, induc_P[n2].mean(dim=1)), dim=1)
