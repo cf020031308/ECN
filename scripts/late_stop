@@ -1,0 +1,86 @@
+#!/bin/bash -
+
+set -x
+gpu2=7
+runs=10
+epochs=200
+for gpu in 6; do
+	time python3 -u node.pyc ECN \
+		pubmed \
+		--attention 0 \
+		--dropout 0.5 \
+		--embedding 0.0 \
+		--hidden 512 \
+		--precompute 2 \
+		--no-importance-sampling \
+		--skip-connection \
+		--weight-decay 0.0 \
+		--early-stop-epochs $epochs \
+		--max-epochs $epochs \
+		--runs $runs \
+		--gpu $gpu 2>&1
+	time python3 -u node.pyc ECN \
+		flickr \
+		--embedding 0.1 \
+		--attention 32 \
+		--precompute 2 \
+		--hidden 128 \
+		--weight-decay 0.0 \
+		--dropout 0.0 \
+		--early-stop-epochs $epochs \
+		--runs $runs \
+		--gpu $gpu 2>&1
+	time python3 -u node.pyc ECN \
+		ppi \
+		--skip-connection \
+		--embedding 0.1 \
+		--attention 0 \
+		--precompute 3 \
+		--hidden 2048 \
+		--weight-decay 0.0 \
+		--dropout 0.1 \
+		--early-stop-epochs $epochs \
+		--max-epochs $epochs \
+		--runs $runs \
+		--gpu $gpu 2>&1
+	time python3 -u node.pyc ECN \
+		arxiv \
+		--embedding 0.1 \
+		--attention 0 \
+		--precompute 2 \
+		--hidden 512 \
+		--weight-decay 0.0 \
+		--dropout 0.0 \
+		--early-stop-epochs $epochs \
+		--max-epochs $epochs \
+		--runs $runs \
+		--gpu $gpu 2>&1
+	time python3 -u node.pyc ECN \
+		yelp \
+		--skip-connection \
+		--embedding 0.01 \
+		--attention 0 \
+		--precompute 0 \
+		--hidden 256 \
+		--weight-decay 0.0 \
+		--dropout 0.0 \
+		--early-stop-epochs $epochs \
+		--max-epochs $epochs \
+		--runs $runs \
+		--gpu $gpu 2>&1
+	time python3 -u node-reddit.pyc ECN \
+		reddit \
+		--skip-connection \
+		--embedding 0 \
+		--attention 0 \
+		--precompute 3 \
+		--hidden 1024 \
+		--weight-decay 0.0 \
+		--dropout 0.5 \
+		--early-stop-epochs $epochs \
+		--max-epochs $epochs \
+		--runs $runs \
+        --gpu2 $gpu2 \
+		--gpu $gpu 2>&1
+	break
+done | tee -a logs/$0.log

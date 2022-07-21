@@ -2,6 +2,7 @@
 
 set -x
 gpu=6
+gpu2=7
 runs=3
 for hidden in 128 256 512 1024 2048; do
 	for dropout in 0.0 0.1 0.2 0.3 0.4 0.5; do
@@ -56,14 +57,15 @@ for hidden in 128 256 512 1024 2048; do
 				--dropout $dropout \
 				--runs $runs \
 				--gpu $gpu 2>&1
-			time python3 -u node.pyc ECN \
+			time python3 -u node-reddit.pyc ECN \
 				reddit \
-				--embedding 0.01 \
-				--precompute 1 \
+				--skip-connection \
+				--precompute 3 \
 				--hidden $hidden \
 				--weight-decay $weight_decay \
 				--dropout $dropout \
 				--runs $runs \
+                --gpu2 $gpu2 \
 				--gpu $gpu 2>&1
             for dataset in pubmed flickr ppi arxiv yelp reddit; do
                 time python3 -u node.pyc MLP $dataset \
@@ -75,6 +77,15 @@ for hidden in 128 256 512 1024 2048; do
                     --gpu $gpu 2>&1
                 time python3 -u node.pyc MLP $dataset \
                     --precompute -1 \
+                    --hidden $hidden \
+                    --weight-decay $weight_decay \
+                    --dropout $dropout \
+                    --runs $runs \
+                    --gpu $gpu 2>&1
+            done
+            for dataset in pubmed flickr ppi arxiv; do
+                time python3 -u node.pyc GCN $dataset \
+                    --precompute 1 \
                     --hidden $hidden \
                     --weight-decay $weight_decay \
                     --dropout $dropout \

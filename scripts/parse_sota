@@ -22,6 +22,10 @@ if [ "$1" ]; then
         cat $1 | grep 'Namespace\|^score:' | grep GraphSAINT -A 1 | grep "dataset='$dataset'" -A 1 | grep score | sort | sed -n '$p'
     done
     for dataset in pubmed flickr ppi arxiv yelp reddit; do
+        echo "$dataset, GCN (trained by ECN)"
+        cat $1 | grep 'attention=0, .*'$dataset'.* embedding=0.0, .*ECN.* precompute=1, .* skip_connection=False\|^score:\|CUDA out' | grep ECN -A 1 | grep score | sort | sed -n '$p'
+    done
+    for dataset in pubmed flickr ppi arxiv yelp reddit; do
         echo "$dataset, ECN"
         cat $1 | grep 'Namespace\|^score:\|CUDA out' | grep ECN -A 2 | grep "dataset='$dataset'" -A 2 | grep score | sort | sed -n '$p'
     done
