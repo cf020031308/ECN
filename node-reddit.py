@@ -636,8 +636,8 @@ class Stat(object):
 
     def end_run(self):
         print('evaluate_as_ecn:', self.ecn)
-        print('val scores:', [s for _, s in self.scores])
-        print('test scores:', [s for s, _ in self.scores])
+        print('val scores:', [s for s, _ in self.scores])
+        print('test scores:', [s for _, s in self.scores])
         print('acc sampling times:', self.acc_sampling_times)
         print('acc training times:', self.acc_training_times)
         self.scores = torch.tensor(self.scores)
