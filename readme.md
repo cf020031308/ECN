@@ -73,8 +73,8 @@ Dataset Reddit is so large that `node.py` raises out-of-memory exception when ev
 Files in `scripts/` folder are scripts that run experiments and parse logfiles.
 
 * `search_arch` runs experiments of ablation study, producing data for Table 3 and Table 5 in our paper.
-* `compare_baselines` runs experiments of speed comparation, producing data for Figure 5 and Figure 6 in out paper.
-* `late_stop` runs experiments of accuracy comparation, producing data of ECN for Table 4 in out paper.
+* `compare_baselines` runs experiments of speed comparation, producing data for Figure 5 and Figure 6 in our paper.
+* `late_stop` runs experiments of accuracy comparation, producing data of ECN for Table 4 in our paper.
 
 ## Datasets
 
@@ -114,5 +114,16 @@ The estimations of two normalization coefficients are updated every time a new s
 
 ## Citation
 
-```
+```bibtex
+@article{LUO2023126430,
+    title = {Edge Convolutional Networks: Decomposing Graph Convolutional Networks for Stochastic Training with Independent Edges},
+    journal = {Neurocomputing},
+    pages = {126430},
+    year = {2023},
+    issn = {0925-2312},
+    doi = {https://doi.org/10.1016/j.neucom.2023.126430},
+    url = {https://www.sciencedirect.com/science/article/pii/S0925231223005532},
+    author = {Yi Luo and Yan Huang and Guangchun Luo and Ke Qin and Aiguo Chen},
+    keywords = {Graph Convolutional Network, Stochastic Training, Sampling, Attention}
+}
 ```
